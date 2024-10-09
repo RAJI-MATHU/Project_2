@@ -1,0 +1,120 @@
+use dataspark;
+
+select gender,count(*) from customer group by gender;
+
+select year(Order_Date)-year(birthday) as Age,count(customerkey) as count from overall_table group by Age order by age;
+
+
+SELECT
+  MONTHNAME(order_date) AS month,
+  ROUND(SUM((unit_price_usd)*quantity),2) AS total_revenue_USD
+FROM
+  overall_table
+GROUP BY
+  MONTHNAME(order_date)
+  order by total_revenue_USD desc;
+
+
+
+select country, count(country) as count,ROUND(SUM((unit_price_usd)*quantity),2) AS total 
+from overall_table
+group by country
+order by total desc;
+
+
+SELECT
+  product_name,
+  ROUND(SUM((unit_price_usd)*quantity),2) AS total
+FROM
+  overall_table
+GROUP BY
+  product_name
+order by total desc 
+limit 10;
+
+
+Select
+product_name,
+ROUND(Sum((unit_price_usd-unit_cost_usd)*quantity),2) as Profit_Margin
+from overall_table
+group by product_name
+order by Profit_Margin desc
+limit 10;
+
+
+select productkey,product_name, count(productkey) as Product_count,sum(quantity) as Total_Quantity
+from overall_table 
+group by productkey,product_name
+order by Product_count desc,Total_Quantity desc
+limit 10;
+
+
+select productkey,product_name, count(productkey) as Product_count,sum(quantity) as Total_Quantity
+from overall_table 
+group by productkey,product_name
+order by Product_count asc,Total_Quantity asc
+limit 10;
+
+
+
+SELECT
+    category,subcategory,
+    ROUND(SUM(unit_price_usd * quantity),2) AS total_sales
+FROM overall_table
+GROUP BY category,subcategory ORDER BY total_sales DESC;
+
+
+
+SELECT
+  Continent,Country,state,storekey,
+  ROUND(SUM((unit_price_usd)*quantity),2) AS total_revenue_USD
+FROM
+  overall_table
+GROUP BY
+  Continent,Country,State,storekey
+order by total_revenue_USD desc;
+
+
+SELECT
+  storekey,
+  ROUND(SUM((unit_price_usd)*quantity),2) AS total
+FROM
+  overall_table
+GROUP BY
+  storekey
+order by total desc;
+
+
+SELECT
+    CASE
+		WHEN  YEAR(open_date)- YEAR(birthday) <= 5 THEN 'Null'
+        WHEN  YEAR(open_date)-YEAR(birthday) BETWEEN 6 AND  10 THEN '5 to 10'
+        WHEN  YEAR(open_date)-YEAR(birthday) BETWEEN 11 AND 20 THEN '10 to 20'
+        WHEN  YEAR(open_date)-YEAR(birthday) BETWEEN 21 AND 30 THEN '20 to 30'
+        WHEN  YEAR(open_date)-YEAR(birthday) BETWEEN 31 AND 40 THEN '30 to 40'
+        WHEN  YEAR(open_date)-YEAR(birthday) BETWEEN 41 AND 50 THEN '40 to 50'
+        WHEN  YEAR(open_date)-YEAR(birthday) BETWEEN 51 AND 59 THEN '50 to 60'
+        WHEN  YEAR(open_date)-YEAR(birthday) >=60 THEN 'More than 60'
+	END AS store_age_bucket,
+    ROUND(SUM(unit_price_usd * quantity), 2) AS total_sales
+FROM overall_table
+GROUP BY store_age_bucket
+ORDER BY total_sales ;
+
+
+SELECT
+    CASE
+        WHEN square_meters < 250 THEN '<250'
+        WHEN square_meters BETWEEN 250 AND 500 THEN '250 to 500'
+        WHEN square_meters BETWEEN 501 AND 750 THEN '500 to 750'
+        WHEN square_meters BETWEEN 751 AND 1000 THEN '750 to 1000'
+        WHEN square_meters BETWEEN 1001 AND 1250 THEN '1000 to 1250'
+        WHEN square_meters BETWEEN 1251 AND 1500 THEN '1250 to 1500'
+        WHEN square_meters BETWEEN 1501 AND 1750 THEN '1500 to 1750'
+        WHEN square_meters BETWEEN 1751 AND 2000 THEN '1750 to 2000'
+        WHEN square_meters > 2000 THEN '> 2000'
+    END AS size_bucket,
+    ROUND(SUM(unit_price_usd * quantity),2) AS total_sales
+FROM overall_table
+GROUP BY size_bucket
+ORDER BY size_bucket ;
